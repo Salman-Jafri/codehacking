@@ -9,7 +9,7 @@ Create Users
 
     <div class="form-group">
 
-        {!! Form::open(['method'=>'POST','action'=>'AdminUserController@store','file'=>true]) !!}
+        {!! Form::open(['method'=>'POST','action'=>'AdminUserController@store','files'=>true]) !!}
 
         {!! Form::label('name_label','Name',['class'=>'form-control']) !!}
 
@@ -41,9 +41,9 @@ Create Users
 
         <br>
 
-        {!! Form::label('file_label','Photo',['class'=>'form-control']) !!}
+        {!! Form::label('photo_label','Photo',['class'=>'form-control']) !!}
 
-        {!! Form::file('file',null,['class'=>'form-control']) !!}
+        {!! Form::file('photo_id',null,['class'=>'form-control']) !!}
 
         <br>
 

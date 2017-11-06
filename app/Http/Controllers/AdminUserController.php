@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditUserRequest;
 use App\Http\Requests\UsersRequest;
+use App\Photo;
 use App\User;
 use App\Role;
 
@@ -56,9 +58,26 @@ class AdminUserController extends Controller
     public function store(UsersRequest $request)
     {
         //
+//
+        $data = $request->all();
+//
+//        return $request->all();
 
-        //return $request->all();
-        User::create($request->all());
+        if($file_data = $request->file('photo_id'))
+        {
+
+            $file_name = time().$file_data->getClientOriginalName();
+            $file_data->move('images',$file_name);
+            $photo = Photo::create(['file'=>$file_name]);
+            $data['photo_id']=$photo->id;
+
+        }
+
+
+
+        $data['password']=bcrypt($request->password);
+
+        User::create($data);
         return redirect('/admin/users');
 
 
@@ -84,6 +103,12 @@ class AdminUserController extends Controller
     public function edit($id)
     {
         //
+        
+        $users = User::findorfail($id);
+        $roles = Role::lists('name','id')->all();
+        return view('admin.users.edit',compact('users','roles'));
+        
+        
     }
 
     /**
@@ -93,9 +118,44 @@ class AdminUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EditUserRequest $request, $id)
     {
         //
+        //return $request->all();
+
+        $user = User::findorfail($id);
+
+
+        $data = $request->all();
+        if($request->password=="")
+        {
+
+            unset($data['password']);
+
+        }
+        else
+        {
+
+            $data['password']=bcrypt($data['password']);
+
+        }
+
+
+        if($file = $request->file('photo_id'))
+        {
+
+            $image_name = time().$file->getClientOriginalName();
+            $file->move('images',$image_name);
+            $photo = Photo::create(['file'=>$image_name]);
+            $data['photo_id']=$photo->id;
+
+
+        }
+
+
+        $user->update($data);
+        return redirect('/admin/users');
+
     }
 
     /**
